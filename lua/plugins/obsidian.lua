@@ -14,8 +14,8 @@ return {
       return {
         workspaces = {
           {
-            name = "notes",
-            path = "~/Documents/notes",
+            name = "obsidian_work",
+            path = "~/Documents/obsidian_work/",
           },
           -- Add more vaults if needed:
           -- { name = "work", path = "~/Obsidian/Work" },
