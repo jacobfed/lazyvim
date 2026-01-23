@@ -37,7 +37,7 @@ return {
               dir = dir:gsub("^(%w)/", "%1:/")
             end
 
-            local label = vim.fn.fnamemodify(dir, ":~")
+            local label = vim.fn.fnamemodify(dir, ":t")
             if branch and branch ~= "" then
               label = label .. " [" .. branch .. "]"
             end
