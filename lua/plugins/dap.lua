@@ -7,10 +7,38 @@ return {
     },
     config = function()
       local dap = require("dap")
+      local uv = vim.uv or vim.loop
 
-      local netcoredbg_path = vim.fn.expand("~/.local/share/nvim/mason/packages/netcoredbg/netcoredbg")
+      local function netcoredbg_cmd()
+        local base = vim.fn.stdpath("data") .. "/mason/packages/netcoredbg/netcoredbg"
+        if vim.fn.has("win32") == 1 then
+          base = base .. ".exe"
+        end
+        if vim.fn.executable(base) == 1 then
+          return base
+        end
+        return nil
+      end
+
+      local function latest_dll(root)
+        local dlls = vim.fn.glob(root .. "/bin/Debug/**/*.dll", false, true)
+        table.sort(dlls, function(a, b)
+          local a_stat = uv.fs_stat(a)
+          local b_stat = uv.fs_stat(b)
+          if not a_stat then
+            return false
+          end
+          if not b_stat then
+            return true
+          end
+          return a_stat.mtime.sec > b_stat.mtime.sec
+        end)
+        return dlls[1]
+      end
+
+      local netcoredbg_path = netcoredbg_cmd()
       if not netcoredbg_path then
-        vim.notify("netcoredbg not found. Install via :Mason or set manual path.", vim.log.levels.WARN)
+        vim.notify("netcoredbg not found. Install via :Mason.", vim.log.levels.WARN)
         return
       end
 
@@ -28,12 +56,14 @@ return {
           request = "launch",
           program = function()
             -- Build and locate dll under ./bin/Debug/<tfm>/<ProjectName>.dll
-            vim.fn.jobstart({ "dotnet", "build" }, { detach = true })
+            vim.fn.system({ "dotnet", "build" })
+            if vim.v.shell_error ~= 0 then
+              vim.notify("dotnet build failed; select a dll manually.", vim.log.levels.WARN)
+            end
             local cwd = vim.fn.getcwd()
-            -- Try to find the most recent dll in bin/Debug
-            local dll = vim.fn.glob(cwd .. "/bin/Debug/**/*.dll", false, true)
-            if dll and #dll > 0 then
-              return dll[1]
+            local dll = latest_dll(cwd)
+            if dll then
+              return dll
             end
             return vim.fn.input("Path to dll: ", cwd .. "/bin/Debug/", "file")
           end,
@@ -54,8 +84,12 @@ return {
           name = "Launch with args",
           request = "launch",
           program = function()
-            vim.fn.jobstart({ "dotnet", "build" }, { detach = true })
-            return vim.fn.input("Path to dll: ", vim.fn.getcwd() .. "/bin/Debug/", "file")
+            vim.fn.system({ "dotnet", "build" })
+            if vim.v.shell_error ~= 0 then
+              vim.notify("dotnet build failed; select a dll manually.", vim.log.levels.WARN)
+            end
+            local cwd = vim.fn.getcwd()
+            return vim.fn.input("Path to dll: ", cwd .. "/bin/Debug/", "file")
           end,
           args = function()
             local args_str = vim.fn.input("Program arguments: ")
