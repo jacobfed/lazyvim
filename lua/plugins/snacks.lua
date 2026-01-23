@@ -67,6 +67,15 @@ return {
         return items
       end
 
+      dashboard.preset = dashboard.preset or {}
+      dashboard.preset.header = [[
+██   ██ ██ ██   ██
+██   ██ ██ ███ ███
+██   ██ ██ ██ █ ██
+ ██ ██  ██ ██   ██
+  ███   ██ ██   ██
+]]
+
       local sections = dashboard.sections or {
         { section = "header" },
         { section = "keys", gap = 1, padding = 1 },
@@ -78,6 +87,7 @@ return {
         if type(section) == "table" and section.section == "keys" then
           table.insert(sections, index, { icon = " ", title = "Sessions", padding = 1 })
           table.insert(sections, index + 1, session_items)
+          table.insert(sections, index + 2, { title = " ", padding = 1 })
           inserted = true
           break
         end
@@ -86,6 +96,7 @@ return {
       if not inserted then
         sections[#sections + 1] = { icon = " ", title = "Sessions", padding = 1 }
         sections[#sections + 1] = session_items
+        sections[#sections + 1] = { title = " ", padding = 1 }
       end
 
       dashboard.sections = sections
