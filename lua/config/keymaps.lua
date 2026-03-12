@@ -3,52 +3,52 @@
 --- Add any additional keymaps here
 
 -- Move selected lines down in visual mode
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv") -- Move the selected lines down
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down one line" })
+
 -- Move selected lines up in visual mode
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv") -- Move the selected lines up
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selection up one line" })
 
 -- Join lines in normal mode and keep cursor position
-vim.keymap.set("n", "J", "mzJ`z") -- Join the current line with the next one, preserving cursor position
+vim.keymap.set("n", "J", "mzJ`z", { desc = "Join line below (keep cursor position)" })
 
 -- Scroll down and recenter the view
-vim.keymap.set("n", "<C-d>", "<C-d>zz") -- Scroll down half a page and center the cursor
+vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Half-page down (recenter cursor)" })
+
 -- Scroll up and recenter the view
-vim.keymap.set("n", "<C-u>", "<C-u>zz") -- Scroll up half a page and center the cursor
+vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Half-page up (recenter cursor)" })
 
 -- Search next and recenter the view
-vim.keymap.set("n", "n", "nzzzv") -- Search next occurrence and center the cursor
+vim.keymap.set("n", "n", "nzzzv", { desc = "Next search result (recenter + open folds)" })
+
 -- Search previous and recenter the view
-vim.keymap.set("n", "N", "Nzzzv") -- Search previous occurrence and center the cursor
+vim.keymap.set("n", "N", "Nzzzv", { desc = "Previous search result (recenter + open folds)" })
 
--- paste without overwriting the default register
-vim.keymap.set("x", "<leader>p", [["_dP]])
+-- Paste without overwriting the default register
+vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Paste over selection (keep yank register)" })
 
--- yank to the system clipboard
-vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]]) -- Yank selected text to the system clipboard
-vim.keymap.set("n", "<leader>Y", [["+Y]]) -- Yank the entire line to the system clipboard
+-- Yank to the system clipboard
+vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to system clipboard" })
+vim.keymap.set("n", "<leader>Y", [["+Y]], { desc = "Yank line to system clipboard" })
 
 -- Delete without affecting the default register
-vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]]) -- Delete selected text without overwriting the default register
+vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]], { desc = "Delete to black hole register" })
 
 -- Format the current buffer using LSP
-vim.keymap.set("n", "<leader>f", vim.lsp.buf.format) -- Format the current buffer
+vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, { desc = "Format buffer (LSP)" })
 
 -- Navigate to the next location in the location list and recenter
-vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz") -- Go to the next location in the location list
+vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz", { desc = "Next location list item (recenter)" })
+
 -- Navigate to the previous location in the location list and recenter
-vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz") -- Go to the previous location in the location list
--->
+vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz", { desc = "Previous location list item (recenter)" })
 
 -- Search and replace the word under the cursor
-vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]]) -- Search and replace the current word
+vim.keymap.set(
+  "n",
+  "<leader>s",
+  [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
+  { desc = "Substitute word under cursor (global)" }
+)
 
 -- Make the current file executable
-vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true }) -- Change file permissions to make it executable
-
--- Insert error handling template
-vim.keymap.set("n", "<leader>ee", "oif err != nil {<CR>}<Esc>Oreturn err<Esc>") -- Insert error handling code
-
--- Source the current file
-vim.keymap.set("n", "<leader><leader>", function()
-  vim.cmd("so") -- Source the current file
-end)
+vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make current file executable" })
