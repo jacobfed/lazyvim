@@ -31,10 +31,11 @@ vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to system clip
 vim.keymap.set("n", "<leader>Y", [["+Y]], { desc = "Yank line to system clipboard" })
 
 -- Delete without affecting the default register
-vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]], { desc = "Delete to black hole register" })
+-- (<leader>D, not <leader>d, to leave the DAP debug group on <leader>d)
+vim.keymap.set({ "n", "v" }, "<leader>D", [["_d]], { desc = "Delete to black hole register" })
 
--- Format the current buffer using LSP
-vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, { desc = "Format buffer (LSP)" })
+-- Format: use LazyVim's <leader>cf (conform.nvim, with LSP fallback) + format-on-save.
+-- A bare <leader>f mapping shadowed LazyVim's file/find group (<leader>ff, <leader>fr, ...).
 
 -- Navigate to the next location in the location list and recenter
 vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz", { desc = "Next location list item (recenter)" })
@@ -43,12 +44,20 @@ vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz", { desc = "Next location lis
 vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz", { desc = "Previous location list item (recenter)" })
 
 -- Search and replace the word under the cursor
+-- (<leader>S, not <leader>s, to leave LazyVim's search group on <leader>s)
 vim.keymap.set(
   "n",
-  "<leader>s",
+  "<leader>S",
   [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
   { desc = "Substitute word under cursor (global)" }
 )
 
 -- Make the current file executable
-vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make current file executable" })
+-- (<leader>X, not <leader>x, to leave LazyVim's diagnostics/quickfix group on <leader>x)
+vim.keymap.set("n", "<leader>X", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make current file executable" })
+
+-- DAP F-key bindings (LazyVim extras.dap.core handles <leader>d* bindings)
+vim.keymap.set("n", "<F5>", function() require("dap").continue() end, { desc = "DAP: Continue" })
+vim.keymap.set("n", "<F10>", function() require("dap").step_over() end, { desc = "DAP: Step over" })
+vim.keymap.set("n", "<F11>", function() require("dap").step_into() end, { desc = "DAP: Step into" })
+vim.keymap.set("n", "<F12>", function() require("dap").step_out() end, { desc = "DAP: Step out" })

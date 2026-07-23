@@ -7,12 +7,31 @@
 -- Or remove existing autocmds by their group name (which is prefixed with `lazyvim_` for the defaults)
 -- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 
+local function style_window_separators()
+  -- Use a high-contrast separator color and keep the legacy split group in sync.
+  vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#ff5f87", bold = true })
+  vim.api.nvim_set_hl(0, "VertSplit", { fg = "#ff5f87", bold = true })
+end
+
+local separator_group = vim.api.nvim_create_augroup("window_separators", { clear = true })
+
+vim.api.nvim_create_autocmd({ "VimEnter", "ColorScheme" }, {
+  desc = "Style window separators",
+  group = separator_group,
+  callback = style_window_separators,
+})
+
+vim.schedule(style_window_separators)
+
 -- C# XML doc comment generation via Roslyn's textDocument/_vs_onAutoInsert.
 -- Typing `///` above a method, class, property, etc. will auto-generate a
 -- stubbed XML doc comment with <summary>, <param>, <returns>, <typeparam>, etc.
 -- Tab/S-Tab navigates between the generated snippet placeholders (via vim.snippet).
+local roslyn_xmldoc = vim.api.nvim_create_augroup("roslyn_xmldoc", { clear = true })
+
 vim.api.nvim_create_autocmd("LspAttach", {
   desc = "Roslyn: generate XML doc comments on /// trigger",
+  group = roslyn_xmldoc,
   callback = function(args)
     local client = vim.lsp.get_client_by_id(args.data.client_id)
     local bufnr = args.buf
@@ -20,6 +39,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
     if not client or (client.name ~= "roslyn" and client.name ~= "roslyn_ls") then
       return
     end
+
+    -- Register InsertCharPre once per buffer so Roslyn re-attaches don't stack duplicates.
+    if vim.b[bufnr].roslyn_autoinsert then
+      return
+    end
+    vim.b[bufnr].roslyn_autoinsert = true
 
     vim.api.nvim_create_autocmd("InsertCharPre", {
       desc = "Roslyn: trigger _vs_onAutoInsert on '/'",
@@ -52,7 +77,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
             "textDocument/_vs_onAutoInsert",
             params,
             function(err, result, _)
-              if err or not result then
+              if err or not result or not result._vs_textEdit then
                 return
               end
 

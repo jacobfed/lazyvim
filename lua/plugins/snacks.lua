@@ -30,7 +30,6 @@ return {
             local name = session:sub(#config.options.dir + 1, -5)
             local parts = vim.split(name, "%%", { plain = true })
             local dir = parts[1] or ""
-            local branch = parts[2]
 
             dir = dir:gsub("%%", "/")
             if jit and jit.os and jit.os:find("Windows") then
@@ -38,9 +37,6 @@ return {
             end
 
             local label = vim.fn.fnamemodify(dir, ":t")
-            if branch and branch ~= "" then
-              label = label .. " [" .. branch .. "]"
-            end
 
             local function load_session()
               vim.fn.chdir(dir)

@@ -5,7 +5,6 @@ return {
     "nvim-treesitter/nvim-treesitter",
     opts = {
       ensure_installed = {
-        "hyprlang",
         "vim",
         "lua",
         "vimdoc",

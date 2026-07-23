@@ -10,6 +10,7 @@ return {
 
       "xmlformatter",
       "csharpier",
+      "netcoredbg",
       "prettier",
 
       "stylua",
