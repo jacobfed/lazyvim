@@ -1,6 +1,14 @@
 return {
   {
     "folke/snacks.nvim",
+    opts = {
+      explorer = {
+        ignored = true,
+      },
+    },
+  },
+  {
+    "folke/snacks.nvim",
     opts = function(_, opts)
       opts.dashboard = opts.dashboard or {}
       local dashboard = opts.dashboard

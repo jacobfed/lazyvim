@@ -56,6 +56,11 @@ vim.keymap.set(
 -- (<leader>X, not <leader>x, to leave LazyVim's diagnostics/quickfix group on <leader>x)
 vim.keymap.set("n", "<leader>X", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make current file executable" })
 
+-- Work dashboard (ADO work items, PRs, local repos)
+vim.keymap.set("n", "<leader>aj", function()
+  require("work_dashboard").open()
+end, { desc = "Work Dashboard (ADO)" })
+
 -- DAP F-key bindings (LazyVim extras.dap.core handles <leader>d* bindings)
 vim.keymap.set("n", "<F5>", function() require("dap").continue() end, { desc = "DAP: Continue" })
 vim.keymap.set("n", "<F10>", function() require("dap").step_over() end, { desc = "DAP: Step over" })
